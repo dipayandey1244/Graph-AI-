@@ -1,0 +1,25 @@
+<!doctype html>
+<html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Chapter 4 · Temporal Graphs to Incident Response</title><link rel="stylesheet" href="../assets/theme.css"/><script src="https://cdn.jsdelivr.net/npm/d3@7"></script></head>
+<body><div class="container"><header><h1>Chapter 4: Temporal Graphs → Cyber Incident Timeline</h1><p>Animated edges show attack propagation over time.</p></header>
+<div class="grid"><div class="card"><svg id="viz"></svg></div><div class="card"><p class="caption">Servers are nodes; edges appear in timestamp order as compromise spreads. SOC teams can replay attack paths to prioritize containment.</p><div class="kpi" id="kpi">Current phase: Idle</div><div class="controls"><button id="play">Replay incident</button></div></div></div></div>
+<script>
+const nodes=[['Gateway',100,220],['App',260,120],['DB',430,120],['Auth',260,320],['Backup',580,220]];
+const events=[['Gateway','App',1],['App','DB',2],['App','Auth',3],['DB','Backup',4]];
+const map=Object.fromEntries(nodes.map(([id,x,y])=>[id,{x,y}]));
+const svg=d3.select('#viz');
+svg.selectAll('circle').data(nodes).enter().append('circle').attr('cx',d=>d[1]).attr('cy',d=>d[2]).attr('r',18).attr('fill','#8b98da');
+svg.selectAll('text').data(nodes).enter().append('text').attr('x',d=>d[1]-25).attr('y',d=>d[2]+34).attr('fill','#dbe1ff').text(d=>d[0]);
+const layer=svg.append('g');
+
+d3.select('#play').on('click',()=>{
+  layer.selectAll('*').remove();
+  d3.select('#kpi').text('Current phase: Initial access');
+  events.forEach((e,i)=>setTimeout(()=>{
+    layer.append('line').attr('x1',map[e[0]].x).attr('y1',map[e[0]].y).attr('x2',map[e[0]].x).attr('y2',map[e[0]].y)
+      .attr('stroke','#ff6b8a').attr('stroke-width',4).transition().duration(500)
+      .attr('x2',map[e[1]].x).attr('y2',map[e[1]].y);
+    d3.select('#kpi').text(`Current phase: T${e[2]} compromise (${e[0]} → ${e[1]})`);
+  }, i*650));
+});
+</script></body></html>

@@ -1,0 +1,7 @@
+{
+  "chapter1": {"concept":"Node centrality", "useCase":"Fraud ring detection in payments"},
+  "chapter2": {"concept":"Community detection", "useCase":"Customer segmentation in retail"},
+  "chapter3": {"concept":"Shortest path", "useCase":"Delivery routing"},
+  "chapter4": {"concept":"Temporal graphs", "useCase":"Cyber incident timelines"},
+  "chapter5": {"concept":"Knowledge graph reasoning", "useCase":"Clinical decision support"}
+}

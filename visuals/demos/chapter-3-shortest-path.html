@@ -1,0 +1,23 @@
+<!doctype html>
+<html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Chapter 3 · Shortest Path to Delivery Routing</title><link rel="stylesheet" href="../assets/theme.css"/><script src="https://cdn.jsdelivr.net/npm/d3@7"></script></head>
+<body><div class="container"><header><h1>Chapter 3: Shortest Path → Last-Mile Delivery</h1><p>Routes animate across a city graph to minimize cost and time.</p></header>
+<div class="grid"><div class="card"><svg id="viz"></svg></div><div class="card"><p class="caption">Warehouses and drop-points are graph nodes. The animation compares non-optimized route vs shortest-path route.</p><div class="kpi" id="kpi">Route ETA: --</div><div class="controls"><button id="run">Animate route optimization</button></div></div></div></div>
+<script>
+const pts=[['W',70,220],['A',220,80],['B',240,260],['C',410,130],['D',430,320],['E',610,170],['F',640,320]];
+const edges=[['W','A'],['W','B'],['A','C'],['B','C'],['B','D'],['C','E'],['D','F'],['E','F']];
+const m=Object.fromEntries(pts.map(p=>[p[0],{x:p[1],y:p[2]}]));
+const svg=d3.select('#viz');
+svg.selectAll('line.edge').data(edges).enter().append('line').attr('class','edge').attr('x1',d=>m[d[0]].x).attr('y1',d=>m[d[0]].y).attr('x2',d=>m[d[1]].x).attr('y2',d=>m[d[1]].y).attr('stroke','#485693').attr('stroke-width',3);
+svg.selectAll('circle').data(pts).enter().append('circle').attr('cx',d=>d[1]).attr('cy',d=>d[2]).attr('r',12).attr('fill','#93a3f4');
+svg.selectAll('text').data(pts).enter().append('text').attr('x',d=>d[1]-4).attr('y',d=>d[2]+4).attr('fill','#0f1530').text(d=>d[0]);
+const rider=svg.append('circle').attr('r',8).attr('fill','#56d39b').attr('cx',70).attr('cy',220);
+function move(path,color,dur){
+  let t=d3.transition().duration(dur);
+  path.slice(1).forEach((n,i)=>{ t=t.transition().duration(dur); rider.transition(t).attr('cx',m[n].x).attr('cy',m[n].y).attr('fill',color);});
+}
+d3.select('#run').on('click',()=>{
+  move(['W','B','D','F'],'#ffb86b',350);
+  setTimeout(()=>{rider.attr('cx',70).attr('cy',220); move(['W','A','C','E','F'],'#56d39b',250); d3.select('#kpi').text('Route ETA: 18 min → 13 min (optimized)');},1700);
+});
+</script></body></html>
