@@ -1,0 +1,23 @@
+<!doctype html>
+<html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Chapter 5 · Knowledge Graph Reasoning to Clinical Support</title><link rel="stylesheet" href="../assets/theme.css"/><script src="https://cdn.jsdelivr.net/npm/d3@7"></script></head>
+<body><div class="container"><header><h1>Chapter 5: KG Reasoning → Clinical Decision Support</h1><p>Rule-based inference animation connects symptoms, biomarkers, and treatment guidance.</p></header>
+<div class="grid"><div class="card"><svg id="viz"></svg></div><div class="card"><p class="caption">As evidence arrives, inferred links appear and confidence rises, mirroring explainable recommendation flows in healthcare.</p><div class="kpi" id="kpi">Inference confidence: 0%</div><div class="controls"><button id="infer">Animate inference chain</button></div></div></div></div>
+<script>
+const nodes=[['Symptom',110,230],['Lab A',280,110],['Lab B',280,330],['Condition',480,220],['Therapy',660,220]];
+const links=[['Symptom','Condition'],['Lab A','Condition'],['Lab B','Condition'],['Condition','Therapy']];
+const m=Object.fromEntries(nodes.map(n=>[n[0],{x:n[1],y:n[2]}]));
+const svg=d3.select('#viz');
+svg.selectAll('circle').data(nodes).enter().append('circle').attr('cx',d=>d[1]).attr('cy',d=>d[2]).attr('r',16).attr('fill','#7a86c2');
+svg.selectAll('text').data(nodes).enter().append('text').attr('x',d=>d[1]-28).attr('y',d=>d[2]-24).attr('fill','#dce2ff').text(d=>d[0]);
+const g=svg.append('g');
+
+d3.select('#infer').on('click',()=>{
+  g.selectAll('*').remove();
+  links.forEach((l,i)=>setTimeout(()=>{
+    g.append('line').attr('x1',m[l[0]].x).attr('y1',m[l[0]].y).attr('x2',m[l[0]].x).attr('y2',m[l[0]].y)
+      .attr('stroke','#56d39b').attr('stroke-width',4).transition().duration(420).attr('x2',m[l[1]].x).attr('y2',m[l[1]].y);
+    d3.select('#kpi').text(`Inference confidence: ${Math.min(100, (i+1)*24)}%`);
+  }, i*520));
+});
+</script></body></html>

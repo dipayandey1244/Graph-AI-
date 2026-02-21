@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#1b2458"/><stop offset="100%" stop-color="#0b1020"/></linearGradient></defs>
+  <rect width="1200" height="700" fill="url(#g)"/>
+  <rect x="40" y="40" width="1120" height="620" rx="16" fill="#111939" stroke="#5a75d6"/>
+  <circle cx="220" cy="350" r="90" fill="#7aa2ff"/>
+  <circle cx="500" cy="300" r="90" fill="#56d39b"/>
+  <circle cx="780" cy="370" r="90" fill="#ffb86b"/>
+  <line x1="310" y1="340" x2="410" y2="310" stroke="#e2e9ff" stroke-width="6"/>
+  <line x1="590" y1="310" x2="690" y2="360" stroke="#e2e9ff" stroke-width="6"/>
+  <text x="80" y="120" fill="#e9ecff" font-family="Arial" font-size="38">Chapter 5 demo export</text>
+  <text x="80" y="170" fill="#9aa4d1" font-family="Arial" font-size="24">Lightweight static export for documentation previews.</text>
+</svg>

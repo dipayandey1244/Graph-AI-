@@ -1,0 +1,24 @@
+<!doctype html>
+<html><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Chapter 2 · Communities to Customer Segments</title>
+<link rel="stylesheet" href="../assets/theme.css"/><script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+</head><body><div class="container"><header><h1>Chapter 2: Community Detection → Retail Segmentation</h1><p>Animated clustering separates shoppers into actionable campaign groups.</p></header>
+<div class="grid"><div class="card"><svg id="viz"></svg></div><div class="card"><p class="caption">Each node is a customer. Link affinity = similar baskets. Animation reveals natural market segments for campaign targeting.</p><div class="kpi" id="kpi">Detected segments: 1</div><div class="controls"><button id="cluster">Run Louvain-like animation</button></div></div></div></div>
+<script>
+const groups=['Budget','Family','Premium'];
+const nodes=d3.range(30).map(i=>({id:i,g:i%3,x:160+Math.random()*500,y:120+Math.random()*220}));
+const svg=d3.select('#viz');
+svg.selectAll('circle').data(nodes).enter().append('circle').attr('cx',d=>d.x).attr('cy',d=>d.y).attr('r',8).attr('fill','#7a86c2').attr('opacity',0.85);
+svg.selectAll('text').data(groups).enter().append('text').attr('x',(d,i)=>120+i*220).attr('y',44).attr('fill','#b7c1f3').text(d=>d).attr('font-size',13);
+
+function animate(){
+  svg.selectAll('circle').transition().duration(1200)
+    .attr('cx',d=>140+d.g*230+Math.random()*90)
+    .attr('cy',d=>110+Math.random()*250)
+    .attr('fill',d=>['#56d39b','#7aa2ff','#ffb86b'][d.g]);
+  d3.select('#kpi').text('Detected segments: 3 (Budget / Family / Premium)');
+}
+
+d3.select('#cluster').on('click', animate);
+</script></body></html>

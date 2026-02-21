@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter 1 · Centrality to Fraud Detection</title>
+  <link rel="stylesheet" href="../assets/theme.css" />
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Chapter 1: Centrality → Fraud Ring Detection</h1>
+      <p>Animation highlights high-betweenness accounts acting as money mules in a transaction graph.</p>
+    </header>
+    <div class="grid">
+      <div class="card"><svg id="viz"></svg></div>
+      <div class="card">
+        <p class="caption">Accounts are nodes; transfers are links. When you animate centrality scoring, mule accounts pulse and dominate routing paths.</p>
+        <div class="kpi" id="kpi">Flagged mule score: --</div>
+        <div class="controls"><button id="play">Animate scoring</button></div>
+      </div>
+    </div>
+  </div>
+<script>
+const nodes = [
+  {id:'A1', c:0.2},{id:'A2', c:0.35},{id:'A3', c:0.91},{id:'A4', c:0.4},{id:'A5', c:0.15},{id:'A6', c:0.64},{id:'A7', c:0.28}
+];
+const links = [
+  ['A1','A3'],['A2','A3'],['A4','A3'],['A5','A3'],['A6','A3'],['A7','A3'],['A2','A4'],['A4','A6']
+].map(([source,target])=>({source,target}));
+const svg = d3.select('#viz');
+const w = svg.node().clientWidth, h = svg.node().clientHeight;
+const sim = d3.forceSimulation(nodes)
+  .force('link', d3.forceLink(links).id(d=>d.id).distance(90))
+  .force('charge', d3.forceManyBody().strength(-280))
+  .force('center', d3.forceCenter(w/2,h/2));
+const link = svg.append('g').selectAll('line').data(links).enter().append('line').attr('stroke','#42508f').attr('stroke-width',2);
+const node = svg.append('g').selectAll('circle').data(nodes).enter().append('circle')
+  .attr('r', d=>10 + d.c*20).attr('fill', d=>d3.interpolateTurbo(d.c)).attr('stroke','#fff').attr('stroke-width',1.2);
+svg.append('g').selectAll('text').data(nodes).enter().append('text').text(d=>d.id).attr('fill','#dce2ff').attr('font-size',12);
+sim.on('tick', ()=>{
+  link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+  node.attr('cx',d=>d.x).attr('cy',d=>d.y);
+  svg.selectAll('text').attr('x',d=>d.x+12).attr('y',d=>d.y+4);
+});
+d3.select('#play').on('click', ()=>{
+  node.transition().duration(800).attr('opacity', d=>d.c>0.8?1:0.45)
+      .transition().duration(900).attr('r', d=>10+d.c*26)
+      .transition().duration(700).attr('r', d=>10+d.c*20);
+  const mule = nodes.reduce((a,b)=>a.c>b.c?a:b);
+  d3.select('#kpi').text(`Flagged mule score: ${mule.id} (${mule.c.toFixed(2)})`);
+});
+</script>
+</body>
+</html>
